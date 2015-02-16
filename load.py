@@ -9,7 +9,6 @@ data_dir = './'
 def create_freq_dict(data_file='data.txt'):
     freq_dict = Counter() # freq_dict["word"] = frequence
     file = open(os.path.join(data_dir,data_file))
-    # counts words frequency
     for line in file:
         words = line.split()
         for word in words:
@@ -36,15 +35,11 @@ def top_freq_dict(freq_dict, freq_limit=1):
         if freq <= freq_limit:
             sum_low_freq += freq
             nb_low_freq += 1
-    # top words by freq
     top_freq_dict = dict(Counter(freq_dict).most_common(len_dict - nb_low_freq))
-    # print "sum_low_freq = ", sum_low_freq
-    # print "nb_low_freq", nb_low_freq
-    # print "len_dict = ", len_dict
     top_freq_dict["UNK"] = sum_low_freq / nb_low_freq
     return  sorted(top_freq_dict.iteritems(), key=operator.itemgetter(1), reverse=True)
 
-# create 1-of-n vectors corresponding to words ***
+# create 1-of-n vectors corresponding to words
 def word_to_vec(top_freq_dict):
     vec_dict = {}
     len_dict = len(top_freq_dict)
