@@ -68,9 +68,9 @@ def word_to_vec(top_freq_dict):
         i += 1
     return vec_dict
 
-# returns the length of the vocabulary containing top words + START&END
+# returns the length of the vocabulary containing top words + 2 (START & END)
 def vocab_len(w2v):
-    return len(w2v)
+    return len(w2v)+2
 
 # creates a matrix representing sentences
 def sent_to_mat(sentences, vec_dict):
@@ -88,11 +88,13 @@ def sent_to_mat(sentences, vec_dict):
 # creates the training set for the inputs
 def create_trX(s2m):
     trX = s2m
+    # lengths
     nb_sentences = len(s2m)
     len_w2v = len(s2m[0][0])
+    # START
     start = [0] * len_w2v
     start[len_w2v-2] = 1
-    print "start =", start
+    # building trX
     for i in range(nb_sentences):
         trX[i].insert(0, start)
     return np.asarray(trX)
@@ -100,12 +102,14 @@ def create_trX(s2m):
 # creates the training set for the targets
 def create_trY(s2m):
     trY = s2m
+    # lengths
     nb_sentences = len(s2m)
     nb_words = len(s2m[0])
     len_w2v = len(s2m[0][0])
+    # END
     end = [0] * len_w2v
     end[len_w2v-1] = 1
-    print "end =", end
+    # building trY
     for i in range(nb_sentences):
         trY[i].insert(nb_words, end)
     return np.asarray(trY)

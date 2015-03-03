@@ -78,11 +78,6 @@ trX = ld.create_trX(s2m) # all sentences begin with START
 trY = ld.create_trY(s2m) # all sentences finish with END
 l_r = floatX(0.1)
 
-# for i in range(10): # nb iterations
-#     for start, end in zip(range(0, len(trX), 128), range(128, len(trX), 128)):
-#         cost = train(trX[start:end], trY[start:end])
-#     print np.mean(np.argmax(teY, axis=1) == predict(teX))
-
 ####################################################
 
 
