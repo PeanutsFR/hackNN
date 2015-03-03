@@ -3,13 +3,22 @@ import theano
 from theano import tensor as T
 import load as ld
 
+sentences = ld.create_sent_list()
+freq_dict = ld.create_freq_dict()
+
+#top_freq =ld.top_freq_dict(freq_dict, len(freq_dict.keys()))
+top_freq =ld.top_freq_dict(freq_dict, 1)
+w2v = ld.word_to_vec(top_freq)
+s2m = ld.sent_to_mat(sentences, w2v)
+
+voc_len = ld.vocab_len(w2v)
 
 # number of hidden units
-n = 7
+n = voc_len
 # number of input units
-nin = 7
+nin = voc_len
 # number of output units
-nout = 7
+nout = voc_len
 
 # input (where first dimension is time)
 u = TT.matrix()
@@ -26,19 +35,19 @@ W_in = theano.shared(numpy.random.uniform(size=(nin, n), low=-.01, high=.01))
 # hidden to output layer weights
 W_out = theano.shared(numpy.random.uniform(size=(n, nout), low=-.01, high=.01))
 # biais bh
-#bh = theano.shared(name='bh',
-                                value=numpy.zeros(n,
-                                dtype=theano.config.floatX))
+# bh = theano.shared(name='bh',
+#                                 value=numpy.zeros(n,
+#                                 dtype=theano.config.floatX))
 # biais bo
-#bo = theano.shared(name='bo',
-                                value=numpy.zeros(n,
-                                dtype=theano.config.floatX))
+# bo = theano.shared(name='bo',
+#                                 value=numpy.zeros(n,
+#                                 dtype=theano.config.floatX))
 
 # recurrent function (using tanh activation function) and linear output
 # activation function
 def step(u_t, h_tm1, W, W_in, W_out):
-    h_t = TT.tanh(TT.dot(u_t, W_in) + TT.dot(h_tm1, W))
-    y_t = TT.dot(h_t, W_out)
+    h_t = TT.nnet.sigmoid(TT.dot(u_t, W_in) + TT.dot(h_tm1, W))
+    y_t = T.nnet.softmax(TT.dot(h_t, W_out))
     return h_t, y_t
 
 # the hidden state `h` for the entire sequence, and the output for the
@@ -59,13 +68,21 @@ fn = theano.function([h0, u, t, lr],
                              W_in: W_in - lr * gW_in,
                              W_out: W_out - lr * gW_out})
 
-for i in range(10):
-    for start, end in zip(range(0, len(trX), 128), range(128, len(trX), 128)):
-        cost = train(trX[start:end], trY[start:end])
-    print np.mean(np.argmax(teY, axis=1) == predict(teX))
 
+######### TRAINING #########
 
+ def floatX(X):
+    return theano.shared(np.asarray(X, dtype=theano.config.floatX))
 
+h_0 = floatX(np.zeros(voc_len))
+trX = ld.create_trX(s2m) # all sentences begin with START
+trY = ld.create_trY(s2m) # all sentences finish with END
+lrate = floatX(0.1)
+
+# for i in range(10): # nb iterations
+#     for start, end in zip(range(0, len(trX), 128), range(128, len(trX), 128)):
+#         cost = train(trX[start:end], trY[start:end])
+#     print np.mean(np.argmax(teY, axis=1) == predict(teX))
 
 ####################################################
 

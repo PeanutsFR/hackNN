@@ -59,14 +59,18 @@ def top_freq_dict(freq_dict, freq_limit=1):
 # creates 1-of-n vectors corresponding to words
 def word_to_vec(top_freq_dict):
     vec_dict = {}
-    len_dict = len(top_freq_dict)
+    len_dict = len(top_freq_dict) + 2 # counting +2 dim for START & END
     i=0
-    while i<len_dict:
+    while i<len_dict-2:
         vec = np.zeros(len_dict)
         vec[i] = 1
         vec_dict[top_freq_dict[i][0]] = vec
         i += 1
     return vec_dict
+
+# returns the length of the vocabulary containing top words + START&END
+def vocab_len(w2v):
+    return len(w2v)
 
 # creates a matrix representing sentences
 def sent_to_mat(sentences, vec_dict):
@@ -79,4 +83,29 @@ def sent_to_mat(sentences, vec_dict):
             else:
                 sentence_mat.append(vec_dict['UNK'])
         sentences_mat.append(sentence_mat)
-    return np.asarray(sentences_mat)
+    return sentences_mat
+
+# creates the training set for the inputs
+def create_trX(s2m):
+    trX = s2m
+    nb_sentences = len(s2m)
+    len_w2v = len(s2m[0][0])
+    start = [0] * len_w2v
+    start[len_w2v-2] = 1
+    print "start =", start
+    for i in range(nb_sentences):
+        trX[i].insert(0, start)
+    return np.asarray(trX)
+
+# creates the training set for the targets
+def create_trY(s2m):
+    trY = s2m
+    nb_sentences = len(s2m)
+    nb_words = len(s2m[0])
+    len_w2v = len(s2m[0][0])
+    end = [0] * len_w2v
+    end[len_w2v-1] = 1
+    print "end =", end
+    for i in range(nb_sentences):
+        trY[i].insert(nb_words, end)
+    return np.asarray(trY)

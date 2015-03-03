@@ -10,9 +10,11 @@ freq_dict = ld.create_freq_dict()
 #top_freq =ld.top_freq_dict(freq_dict, len(freq_dict.keys()))
 top_freq =ld.top_freq_dict(freq_dict, 1)
 w2v = ld.word_to_vec(top_freq)
+print ld.vocab_len(w2v)
 
 s2m = ld.sent_to_mat(sentences, w2v)
-print s2m
+trY = ld.create_trY(s2m)
+print "trY[0] =", trY[0]
 
 #ld.display_dict(freq_dict)
 #ld.display_liste(top_freq)
