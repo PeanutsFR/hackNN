@@ -68,9 +68,9 @@ def word_to_vec(top_freq_dict):
         i += 1
     return vec_dict
 
-# returns the length of the vocabulary containing top words + 2 (START & END)
-def vocab_len(w2v):
-    return len(w2v)+2
+# returns the length of the word vectors + 2 (START & END)
+def w2v_len(w2v):
+    return int(len(w2v)+2)
 
 # creates a matrix representing sentences
 def sent_to_mat(sentences, vec_dict):
