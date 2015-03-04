@@ -49,9 +49,9 @@ s_0 = T.vector()
 lr = T.scalar()
 
 # weight matrices
-U = init_weights((voc_len, 1))
-W = init_weights((voc_len, 1))
-V = init_weights((voc_len, 1))
+U = init_weights((voc_len, voc_len))
+W = init_weights((voc_len, voc_len))
+V = init_weights((voc_len, voc_len))
 # F = init_weights((voc_len, 1))
 # G = init_weights((voc_len, 1))
 
