@@ -87,7 +87,7 @@ def sent_to_mat(sentences, vec_dict):
 
 # creates the training set for the inputs
 def create_trX(s2m):
-    trX = s2m
+    trX = s2m[:]
     # lengths
     nb_sentences = len(s2m)
     len_w2v = len(s2m[0][0])
@@ -101,7 +101,7 @@ def create_trX(s2m):
 
 # creates the training set for the targets
 def create_trY(s2m):
-    trY = s2m
+    trY = s2m[:]
     # lengths
     nb_sentences = len(s2m)
     nb_words = len(s2m[0])

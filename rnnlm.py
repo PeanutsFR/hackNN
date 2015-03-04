@@ -2,21 +2,8 @@ import numpy as np
 import load as ld
 
 
-# Parsing data to dictionnaries
-sentences = ld.create_sent_list()
-freq_dict = ld.create_freq_dict()
-top_freq =ld.top_freq_dict(freq_dict, 1)
-# Word to vector
-w2v = ld.word_to_vec(top_freq)
-# Sentences to matrix
-s2m = ld.sent_to_mat(sentences, w2v)
-
-# Length of word vectors
-w2v_len = ld.w2v_len(w2v)
-
-
 def init_weights(shape):
-    return np.random.randn(*shape) * 0.1
+    return np.random.randn(*shape) * 0.01
 
 def sigmoid(x):
     return 1.0 / (1+np.exp(-x))
@@ -25,9 +12,22 @@ def softmax(x):
     e = np.exp(x)
     return e / np.sum(e)
 
+# Parsing data to dictionnaries
+sentences = ld.create_sent_list()
+freq_dict = ld.create_freq_dict()
+top_freq =ld.top_freq_dict(freq_dict, 1)
+# Word to vector
+w2v = ld.word_to_vec(top_freq)
+# Length of word vectors = len(vocabulary)+2
+w2v_len = ld.w2v_len(w2v)
+
 # Training set
-trX = ld.create_trX(s2m) # each input sentence begins with START
-trY = ld.create_trY(s2m) # each output sentence finishes with END
+s2m_x = ld.sent_to_mat(sentences, w2v)
+s2m_y = ld.sent_to_mat(sentences, w2v)
+# inputs
+trX = ld.create_trX(s2m_x)
+# outputs
+trY = ld.create_trY(s2m_y)
 
 # Weights
 W_in = init_weights((w2v_len, w2v_len))
@@ -48,9 +48,3 @@ y_t = softmax(np.dot(W_out, h_t))
 
 # # Error between output and target
 error = desired_t - y_t
-print y_t
-
-# Model
-# h_t = T.nnet.sigmoid(T.dot(w_t, W_in) + T.dot(h_0, W_h))
-# y_t = T.nnet.softmax(T.dot(h_t, W_out))
-
