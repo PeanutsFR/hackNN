@@ -17,6 +17,8 @@ trX = ld.create_trX(s2m_x)
 trY = ld.create_trY(s2m_y)
 print "trX[0] =", trX[0]
 print "trY[0] =", trY[0]
+print "len(trX) =", len(trX)
+print "len(trX[0]) =", len(trX[0])
 
 #ld.display_dict(freq_dict)
 #ld.display_liste(top_freq)
