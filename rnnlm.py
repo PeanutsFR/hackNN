@@ -50,7 +50,7 @@ nb_loops = 0
 y_plot = []
 
 # Training
-while nb_loops < 1000:
+while nb_loops < 1:
     sentence = randint(0, len(trX)-1)
     for word in range(0, len(trX[sentence]), 1):
         w_t = trX[sentence][word]
@@ -65,31 +65,26 @@ while nb_loops < 1000:
         error = 0.5 * (np.linalg.norm(desired_t - y_t) ** 2)
         print 'step =', i, '- error = ', error
         i = i+1
-        y_plot.append(error)
 
         # Backpropagation
 
-        # Calculation variables
-        p1 = np.dot((y_t - desired_t), W_out)
-        s1 = np.dot(w_t, W_in) + np.dot(h_tm1, W_h)
-        p2 = np.dot(sigmoid_prime(s1), w_t)
-        p3 = np.dot(sigmoid_prime(s1), h_tm1)
+        delta_2 = (y_t - desired_t) * sigmoid_prime(np.dot(W_out, h_t))
+        delta_1 = (np.dot(np.transpose(W_out), delta_2)) * (np.dot(W_in, w_t) + np.dot(W_h, h_tm1))
 
-        # Derivate of loss w.r.t weights
-        derror_dwin = np.dot(p1, p2)
-        derror_dwout = np.dot((y_t - desired_t), h_t)
-        derror_dh = np.dot(p1, p3)
+        derror_dwin = np.dot(w_t, delta_1)
+        derror_dh = np.dot(h_tm1, delta_1)
+        derror_dwout = np.dot(h_t, delta_2)
 
         # Update of weights
         W_in = W_in - lrate * derror_dwin
-        W_out = W_out - lrate * derror_dwout
         W_h = W_h - lrate * derror_dh
+        W_out = W_out - lrate * derror_dwout
+    y_plot.append(error)
     nb_loops = nb_loops + 1
 
 # Plot
-x=np.linspace(0, nb_loops*8, nb_loops*8)
-#print 'len(x) =', len(x), "- len(y) = ", len(y_plot)
-plt.plot(x, y_plot)
-plt.ylabel('error')
-plt.xlabel("nb_loops")
-plt.show()
+# x=np.linspace(0, nb_loops, nb_loops)
+# plt.plot(x, y_plot)
+# plt.ylabel('error')
+# plt.xlabel("nb_loops")
+# plt.show()
