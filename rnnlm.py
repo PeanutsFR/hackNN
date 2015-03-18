@@ -43,44 +43,64 @@ W_out = init_weights((w2v_len, w2v_len))
 h_0 = np.ones(w2v_len) * 0.1
 
 # Learning rate
-lrate = 0.1
+lrate = 1
 
 i = 0
-nb_loops = 0
 y_plot = []
 
 # Training
+nb_loops = 0
 while nb_loops < 1:
-    sentence = randint(0, len(trX)-1)
-    for word in range(0, len(trX[sentence]), 1):
-        w_t = trX[sentence][word]
-        desired_t = trY[sentence][word]
-
-        # Model
-        h_tm1 = h_0
-        h_t = sigmoid(np.dot(W_in, w_t) + np.dot(W_h, h_tm1))
-        y_t = softmax(np.dot(W_out, h_t))
-
-        # Error between output and target
-        error = 0.5 * (np.linalg.norm(desired_t - y_t) ** 2)
-        print 'step =', i, '- error = ', error
-        i = i+1
-
-        # Backpropagation
-
-        delta_2 = (y_t - desired_t) * sigmoid_prime(np.dot(W_out, h_t))
-        delta_1 = (np.dot(np.transpose(W_out), delta_2)) * (np.dot(W_in, w_t) + np.dot(W_h, h_tm1))
-
-        derror_dwin = np.dot(w_t, delta_1)
-        derror_dh = np.dot(h_tm1, delta_1)
-        derror_dwout = np.dot(h_t, delta_2)
-
-        # Update of weights
-        W_in = W_in - lrate * derror_dwin
-        W_h = W_h - lrate * derror_dh
-        W_out = W_out - lrate * derror_dwout
-    y_plot.append(error)
     nb_loops = nb_loops + 1
+
+    sentence = randint(0, len(trX)-1)
+    #for word in range(0, len(trX[sentence]), 1):
+    for word in range(0, 1):
+        nb_loops_2 = 0
+        while nb_loops_2 < 1:
+            nb_loops_2 = nb_loops_2 + 1
+
+            w_t = trX[sentence][word]
+            desired_t = trY[sentence][word]
+
+            # Model
+            h_tm1 = h_0
+            h_t = sigmoid(np.dot(W_in, w_t) + np.dot(W_h, h_tm1))
+            y_t = softmax(np.dot(W_out, h_t))
+
+            # Error between output and target
+            error = 0.5 * (np.linalg.norm(desired_t - y_t) ** 2)
+            print 'step =', i, '- error = ', error
+            i = i+1
+
+            #print "y(t) - desired(t) =", (y_t - desired_t)
+
+            # Backpropagation
+            z_2 = np.dot(W_out, h_t)
+            z_1 = np.dot(W_in, w_t) + np.dot(W_h, h_tm1)
+
+            #a_2 = sigmoid(z_2)
+            a_1 = sigmoid(z_1)
+
+            delta_2 = (y_t - desired_t) * sigmoid_prime(z_2)
+            delta_1 = (np.dot(np.transpose(W_out), delta_2)) * sigmoid_prime(z_1)
+
+            print delta_1
+            print delta_2
+
+            derror_dwin = np.dot(delta_1, np.transpose(w_t))
+            derror_dh = np.dot(delta_1, np.transpose(h_tm1))
+            derror_dwout = np.dot(delta_2, np.transpose(a_1))
+
+            print "derror_dwin =", derror_dwin
+            print "derror_dwout = ", derror_dwout
+            print "derror_dh =", derror_dh
+
+            # Update of weights
+            W_in = W_in - lrate * derror_dwin
+            W_h = W_h - lrate * derror_dh
+            W_out = W_out - lrate * derror_dwout
+    y_plot.append(error)
 
 # Plot
 # x=np.linspace(0, nb_loops, nb_loops)
