@@ -43,19 +43,19 @@ W_out = init_weights((w2v_len, w2v_len))
 h_0 = np.ones(w2v_len) * 0.1
 
 # Learning rate
-lrate = 1
+lrate = 0.1
 
+# plot variables
 i = 0
 y_plot = []
 
 # Training
 nb_loops = 0
-while nb_loops < 1:
+while nb_loops < 100000:
     nb_loops = nb_loops + 1
 
     sentence = randint(0, len(trX)-1)
-    #for word in range(0, len(trX[sentence]), 1):
-    for word in range(0, 1):
+    for word in range(0, len(trX[sentence]), 1):
         nb_loops_2 = 0
         while nb_loops_2 < 1:
             nb_loops_2 = nb_loops_2 + 1
@@ -73,8 +73,6 @@ while nb_loops < 1:
             print 'step =', i, '- error = ', error
             i = i+1
 
-            #print "y(t) - desired(t) =", (y_t - desired_t)
-
             # Backpropagation
             z_2 = np.dot(W_out, h_t)
             z_1 = np.dot(W_in, w_t) + np.dot(W_h, h_tm1)
@@ -84,17 +82,16 @@ while nb_loops < 1:
 
             delta_2 = (y_t - desired_t) * sigmoid_prime(z_2)
             delta_1 = (np.dot(np.transpose(W_out), delta_2)) * sigmoid_prime(z_1)
+            delta_2 = delta_2.reshape(len(delta_2), 1)
+            delta_1 = delta_1.reshape(len(delta_1), 1)
 
-            print delta_1
-            print delta_2
+            trans_w_t = w_t.reshape(1, len(w_t))
+            trans_h_tm1 = h_tm1.reshape(1, len(h_tm1))
+            trans_a_1 = a_1.reshape(1, len(a_1))
 
-            derror_dwin = np.dot(delta_1, np.transpose(w_t))
-            derror_dh = np.dot(delta_1, np.transpose(h_tm1))
-            derror_dwout = np.dot(delta_2, np.transpose(a_1))
-
-            print "derror_dwin =", derror_dwin
-            print "derror_dwout = ", derror_dwout
-            print "derror_dh =", derror_dh
+            derror_dwin = np.dot(delta_1, trans_w_t)
+            derror_dh = np.dot(delta_1, trans_h_tm1)
+            derror_dwout = np.dot(delta_2, trans_a_1)
 
             # Update of weights
             W_in = W_in - lrate * derror_dwin
@@ -103,8 +100,8 @@ while nb_loops < 1:
     y_plot.append(error)
 
 # Plot
-# x=np.linspace(0, nb_loops, nb_loops)
-# plt.plot(x, y_plot)
-# plt.ylabel('error')
-# plt.xlabel("nb_loops")
-# plt.show()
+x=np.linspace(0, nb_loops, nb_loops)
+plt.plot(x, y_plot)
+plt.ylabel('error')
+plt.xlabel("nb_loops")
+plt.show()

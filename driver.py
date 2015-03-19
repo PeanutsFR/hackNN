@@ -92,13 +92,21 @@ for i in range(0, len(inputs)):
 lrate = 0.1
 
 # layer 3 - ouptut
-print Wout
+# print Wout
 
 sum3 = 0
 for i in range(0, len(inputs)):
     sum3 = sum3 + np.dot(delta3[i], np.transpose(a2[i]))
-print sum3
+#print sum3
 Wout = Wout - lrate * sum3
 
-print Wout
+#print Wout
     # layer 2 - hidden
+
+deltaL = np.array([5, 9])
+deltaL = deltaL.reshape(2, 1)
+al_1 = np.array([1, 2, 3, 4])
+al_1 = al_1.reshape(1, 4)
+
+vec = np.dot(deltaL, al_1)
+print vec
