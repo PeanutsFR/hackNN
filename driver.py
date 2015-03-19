@@ -88,6 +88,12 @@ for i in range(0, len(inputs)):
         # layer 2 - hidden
     delta2[i] = np.dot(np.transpose(Wout), delta3[i]) * sigmoid_prime(z2[i])
 
+# reshape
+for i in range(0, len(inputs)):
+    delta3[i] = (delta3[i]).reshape(len(delta3[i], 1))
+    delta2[i] = (delta2[i]).reshape(len(delta2[i], 1))
+
+
 # Gradient descent
 lrate = 0.1
 

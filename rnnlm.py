@@ -60,7 +60,7 @@ while nb_loops < 100000:
         while nb_loops_2 < 1:
             nb_loops_2 = nb_loops_2 + 1
 
-            w_t = trX[sentence][word]
+            w_t = np.array(trX[sentence][word])
             desired_t = trY[sentence][word]
 
             # Model
@@ -85,7 +85,7 @@ while nb_loops < 100000:
             delta_2 = delta_2.reshape(len(delta_2), 1)
             delta_1 = delta_1.reshape(len(delta_1), 1)
 
-            trans_w_t = w_t.reshape(1, len(w_t))
+            trans_w_t = (w_t).reshape(1, len(w_t))
             trans_h_tm1 = h_tm1.reshape(1, len(h_tm1))
             trans_a_1 = a_1.reshape(1, len(a_1))
 
