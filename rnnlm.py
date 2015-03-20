@@ -50,57 +50,71 @@ i = 0
 y_plot = []
 
 # Training
-nb_loops = 0
-while nb_loops < 100000:
-    nb_loops = nb_loops + 1
+#outer outer loop here...
+epochs = 0
+while epochs < 10000:
+    epochs += 1
 
-    sentence = randint(0, len(trX)-1)
-    for word in range(0, len(trX[sentence]), 1):
-        nb_loops_2 = 0
-        while nb_loops_2 < 1:
-            nb_loops_2 = nb_loops_2 + 1
+    error_percent = 0.0
 
-            w_t = np.array(trX[sentence][word])
-            desired_t = trY[sentence][word]
+    nb_loops = 0
+    while nb_loops < 10:
+        nb_loops = nb_loops + 1
 
-            # Model
-            h_tm1 = h_0
-            h_t = sigmoid(np.dot(W_in, w_t) + np.dot(W_h, h_tm1))
-            y_t = softmax(np.dot(W_out, h_t))
+        sentence = randint(0, len(trX)-1)
+        for word in range(0, len(trX[sentence]), 1):
+            nb_loops_2 = 0
+            while nb_loops_2 < 1:
+                nb_loops_2 = nb_loops_2 + 1
 
-            # Error between output and target
-            error = 0.5 * (np.linalg.norm(desired_t - y_t) ** 2)
-            print 'step =', i, '- error = ', error
-            i = i+1
+                w_t = np.array(trX[sentence][word])
+                desired_t = np.array(trY[sentence][word])
 
-            # Backpropagation
-            z_2 = np.dot(W_out, h_t)
-            z_1 = np.dot(W_in, w_t) + np.dot(W_h, h_tm1)
+                # Model
+                h_tm1 = h_0
+                h_t = sigmoid(np.dot(W_in, w_t) + np.dot(W_h, h_tm1))
+                y_t = softmax(np.dot(W_out, h_t))
 
-            #a_2 = sigmoid(z_2)
-            a_1 = sigmoid(z_1)
+                # Error between output and target
+                error = 0.5 * (np.linalg.norm(desired_t - y_t) ** 2)
+                # print 'step =', i, '- error = ', error
 
-            delta_2 = (y_t - desired_t) * sigmoid_prime(z_2)
-            delta_1 = (np.dot(np.transpose(W_out), delta_2)) * sigmoid_prime(z_1)
-            delta_2 = delta_2.reshape(len(delta_2), 1)
-            delta_1 = delta_1.reshape(len(delta_1), 1)
+                if (y_t.argmax() != desired_t.argmax()):
+                    error_percent = error_percent +1.0
 
-            trans_w_t = (w_t).reshape(1, len(w_t))
-            trans_h_tm1 = h_tm1.reshape(1, len(h_tm1))
-            trans_a_1 = a_1.reshape(1, len(a_1))
+                # Backpropagation
+                z_2 = np.dot(W_out, h_t)
+                z_1 = np.dot(W_in, w_t) + np.dot(W_h, h_tm1)
 
-            derror_dwin = np.dot(delta_1, trans_w_t)
-            derror_dh = np.dot(delta_1, trans_h_tm1)
-            derror_dwout = np.dot(delta_2, trans_a_1)
+                #a_2 = sigmoid(z_2)
+                a_1 = sigmoid(z_1)
 
-            # Update of weights
-            W_in = W_in - lrate * derror_dwin
-            W_h = W_h - lrate * derror_dh
-            W_out = W_out - lrate * derror_dwout
-    y_plot.append(error)
+                delta_2 = (y_t - desired_t) * sigmoid_prime(z_2)
+                delta_1 = (np.dot(np.transpose(W_out), delta_2)) * sigmoid_prime(z_1)
+                delta_2 = delta_2.reshape(len(delta_2), 1)
+                delta_1 = delta_1.reshape(len(delta_1), 1)
+
+                trans_w_t = (w_t).reshape(1, len(w_t))
+                trans_h_tm1 = h_tm1.reshape(1, len(h_tm1))
+                trans_a_1 = a_1.reshape(1, len(a_1))
+
+                derror_dwin = np.dot(delta_1, trans_w_t)
+                derror_dh = np.dot(delta_1, trans_h_tm1)
+                derror_dwout = np.dot(delta_2, trans_a_1)
+
+                # Update of weights
+                W_in = W_in - lrate * derror_dwin
+                W_h = W_h - lrate * derror_dh
+                W_out = W_out - lrate * derror_dwout
+
+    y_plot.append(error_percent)
+    error_percent = ((error_percent / 8.0) / nb_loops) * 100
+    print 'step =', i, '- error_percent = ', error_percent
+    i = i+1
+
 
 # Plot
-x=np.linspace(0, nb_loops, nb_loops)
+x=np.linspace(0, epochs, epochs)
 plt.plot(x, y_plot)
 plt.ylabel('error')
 plt.xlabel("nb_loops")
